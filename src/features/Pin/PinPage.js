@@ -26,7 +26,7 @@ const PinPage = () => {
   // state untuk tombol calculator dibawah
 
   const [currVal, setCurrVal] = useState("");
-  const [operator, setOperator] = useState(null);
+
   const [prevVal, setPrevVal] = useState(null);
 
   // handleState untuk tombol dibawah
@@ -36,16 +36,16 @@ const PinPage = () => {
       setCurrVal(`${currVal}${value}`);
     }
 
-    if (type === "operator") {
-      setOperator(value);
-      setPrevVal(currVal);
-      setCurrVal("0");
+    if (type === "clear") {
+      setCurrVal("");
+
+      setPrevVal(null);
     }
 
-    if (type === "clear") {
-      setCurrVal("0");
-      setOperator(null);
-      setPrevVal(null);
+    if (type === "delete") {
+      setCurrVal(null);
+
+      setPrevVal(`${prevVal}`);
     }
   };
 
@@ -110,9 +110,9 @@ const PinPage = () => {
       <RowButton>
         <ButtonNumber text="0" onPress={() => onHandleChange("number", 0)} />
         <ButtonNumber
-          text="C"
+          text="D"
           theme="secondary"
-          onPress={() => onHandleChange("clear")}
+          onPress={() => onHandleChange("delete")}
         />
       </RowButton>
 
