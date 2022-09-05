@@ -1,4 +1,4 @@
-import { Text, TextInput, View } from "react-native";
+import { Text, TextInput, View, StyleSheet } from "react-native";
 import MainContainer from "../../shared/components/MainContainer";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import FormButton from "../../shared/components/FormButton";
@@ -6,12 +6,15 @@ import { useEffect, useState } from "react";
 import { useTheme } from "../../shared/context/ThemeContext";
 import NumberView from "./components/NumberView";
 
+import ButtonNumber from "./components/ButtonNumber";
+import RowButton from "./components/RowButton";
+
 const PinPage = () => {
   const theme = useTheme();
   const navigation = useNavigation();
   const route = useRoute();
   const [pinParam, setPinParam] = useState({});
-  const [pin, setPin] = useState("");
+  // const [pin, setPin] = useState("");
   useEffect(() => {
     if (route.params?.userId && route.params?.prevPage) {
       setPinParam({
@@ -20,6 +23,69 @@ const PinPage = () => {
       });
     }
   }, [route.params]);
+
+  // state untuk tombol calculator dibawah
+
+  const [currVal, setCurrVal] = useState("");
+  const [operator, setOperator] = useState(null);
+  const [prevVal, setPrevVal] = useState(null);
+
+  // handleState untuk tombol dibawah
+
+  const handleTap = (type, value) => {
+    if (type === "number") {
+      setCurrVal(`${currVal}${value}`);
+    }
+
+    if (type === "operator") {
+      setOperator(value);
+      setPrevVal(currVal);
+      setCurrVal("0");
+    }
+
+    if (type === "clear") {
+      setCurrVal("0");
+      setOperator(null);
+      setPrevVal(null);
+    }
+
+    if (type === "posneg") {
+      setCurrVal(`${parseFloat(currVal) * -1}`);
+    }
+
+    if (type === "percentage") {
+      setCurrVal(`${parseFloat(currVal) * 0.01}`);
+    }
+
+    if (type === "equal") {
+      const current = parseFloat(currVal);
+      const previous = parseFloat(prevVal);
+
+      if (operator === "+") {
+        setCurrVal(previous + current);
+        setOperator(null);
+        setPrevVal(null);
+      }
+
+      if (operator === "/") {
+        setCurrVal(previous / current);
+        setOperator(null);
+        setPrevVal(null);
+      }
+
+      if (operator === "-") {
+        setCurrVal(previous - current);
+        setOperator(null);
+        setPrevVal(null);
+      }
+
+      if (operator === "*") {
+        setCurrVal(previous * current);
+        setOperator(null);
+        setPrevVal(null);
+      }
+    }
+  };
 
   return (
     <MainContainer>
@@ -35,7 +101,8 @@ const PinPage = () => {
           >
             Please input PIN {"\n"} (User id : {pinParam.userId})
           </Text>
-          <TextInput
+
+          {/* <TextInput
             secureTextEntry
             style={{
               borderBottomColor: theme.colors.foreground,
@@ -46,13 +113,63 @@ const PinPage = () => {
             }}
             value={pin}
             onChangeText={setPin}
-          ></TextInput>
+          ></TextInput> */}
+
+          {/* <TextInput
+            secureTextEntry
+            style={{
+              borderBottomColor: theme.colors.foreground,
+              borderBottomWidth: 1,
+              marginVertical: theme.spacing.l,
+              fontSize: 32,
+              textAlign: "center",
+            }}
+            value= {currVal}
+            onChangeText={setPin}
+          >
+            {currVal}
+          </TextInput> */}
+
+          <Text style={styles.value}>{currVal}</Text>
         </View>
       </View>
 
-      <View style={{ flex: 1, marginHorizontal: theme.spacing.m }}>
+      {/* ini tombol yang lama */}
+
+      {/* <View style={{ flex: 1, marginHorizontal: theme.spacing.m }}>
         <NumberView />
-      </View>
+      </View> */}
+
+      {/* tombol yang baru dibawah */}
+
+      <RowButton>
+        <ButtonNumber text="7" onPress={() => handleTap("number", 7)} />
+        <ButtonNumber text="8" onPress={() => handleTap("number", 8)} />
+        <ButtonNumber text="9" onPress={() => handleTap("number", 9)} />
+      </RowButton>
+
+      <RowButton>
+        <ButtonNumber text="4" onPress={() => handleTap("number", 4)} />
+        <ButtonNumber text="5" onPress={() => handleTap("number", 5)} />
+        <ButtonNumber text="6" onPress={() => handleTap("number", 6)} />
+      </RowButton>
+
+      <RowButton>
+        <ButtonNumber text="1" onPress={() => handleTap("number", 1)} />
+        <ButtonNumber text="2" onPress={() => handleTap("number", 2)} />
+        <ButtonNumber text="3" onPress={() => handleTap("number", 3)} />
+      </RowButton>
+
+      <RowButton>
+        <ButtonNumber text="0" onPress={() => handleTap("number", 0)} />
+        <ButtonNumber
+          text="C"
+          theme="secondary"
+          onPress={() => handleTap("clear")}
+        />
+      </RowButton>
+
+      {/* untuk submit button dibawah  */}
 
       <FormButton
         onClick={() => {
@@ -66,5 +183,15 @@ const PinPage = () => {
     </MainContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  value: {
+    color: "rgb(252,80,40)",
+    fontSize: 40,
+    textAlign: "right",
+    marginRight: 20,
+    marginBottom: 10,
+  },
+});
 
 export default PinPage;

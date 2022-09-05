@@ -1,12 +1,16 @@
 import { useTheme } from "../../../shared/context/ThemeContext";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import FormButton from "../../../shared/components/FormButton";
 
-const NumberItem = ({ button }) => {
+const NumberItem = ({ button, onClick }) => {
   const theme = useTheme();
   const styles = styling(theme);
   return (
-    <TouchableOpacity style={{ alignItems: "center" }}>
+    <TouchableOpacity
+      style={{ alignItems: "center" }}
+      onPress={() => alert(`ini adalah ${button.buttonType}`)}
+    >
       <View style={styles.circularMenu}>
         <Text>{button.buttonType}</Text>
       </View>
