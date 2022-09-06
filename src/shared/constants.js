@@ -11,3 +11,7 @@ export const SERVICE = {
   LOGIN: "/login",
   PRODUCT: "/product",
 };
+
+export const KEY = {
+  TOKEN: "token",
+};

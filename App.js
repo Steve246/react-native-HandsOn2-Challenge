@@ -7,6 +7,7 @@ import { serviceFactory } from "./src/services/ServiceFactory";
 import { DependencyProvider } from "./src/shared/context/DependencyContext";
 import { apiClientFactory } from "./src/shared/APIClientFactory";
 import { clientInstance } from "./src/shared/AxiosClient";
+import { AuthProvider } from "./src/shared/context/AuthContext";
 
 export default function App() {
   const apiClient = apiClientFactory(clientInstance);
@@ -21,7 +22,9 @@ export default function App() {
       <SafeAreaProvider>
         <ThemeProvider>
           <NavigationContainer>
-            <AppRouter />
+            <AuthProvider>
+              <AppRouter />
+            </AuthProvider>
           </NavigationContainer>
         </ThemeProvider>
       </SafeAreaProvider>
