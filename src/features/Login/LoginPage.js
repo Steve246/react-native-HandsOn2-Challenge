@@ -66,9 +66,10 @@ const LoginPage = () => {
           <FormButton
             label="Login"
             style={styles.buttonSpace}
-            onClick={() => {
-              navigation.replace(ROUTE.MAIN);
-            }}
+            // onClick={() => {
+            //   navigation.replace(ROUTE.MAIN);
+            // }}
+            onClick={onAuthenticate}
             Icon={<Entypo name="lock-open" style={styles.iconButton} />}
           />
         </View>
