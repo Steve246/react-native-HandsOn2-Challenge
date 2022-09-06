@@ -20,25 +20,25 @@ const LoginPage = () => {
   const styles = styling(theme);
   const [userName, onChangeUserName] = useState("");
   const [password, onChangePassword] = useState("");
-
   const { viewState, setLoading, setError } = useViewState();
-  const { loginService } = useDependency();
+  const { onLogin } = useAuth();
 
   const onAuthenticate = async () => {
-    KeyboardEvent.dismiss();
+    Keyboard.dismiss();
     setLoading();
     try {
-      const response = await loginService.auhthenticate({
-        userName: userName,
-        password: password,
-      });
-
-      console.log(response);
-
-      if (response) {
-        navigation.replace(ROUTE.MAIN);
+      if (userName === "" && password === "") {
+        throw new Error("Please input your user name and password");
       } else {
-        setError(new Error("Unauthorized"));
+        const response = await onLogin({
+          userName: userName,
+          password: password,
+        });
+        if (response) {
+          navigation.replace(ROUTE.HOME);
+        } else {
+          throw new Error("Unauthorized");
+        }
       }
     } catch (e) {
       setError(e);
@@ -66,14 +66,14 @@ const LoginPage = () => {
           <FormButton
             label="Login"
             style={styles.buttonSpace}
-            // onClick={() => {
-            //   navigation.replace(ROUTE.MAIN);
-            // }}
             onClick={onAuthenticate}
-            Icon={<Entypo name="lock-open" style={styles.iconButton} />}
+            Icon=<Entypo name="lock-open" style={styles.iconButton} />
           />
         </View>
       </AppBackground>
+      {viewState.error !== null && (
+        <Snackbar message={viewState.error.message} />
+      )}
     </MainContainer>
   );
 };
