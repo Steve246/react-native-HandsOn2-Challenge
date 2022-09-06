@@ -43,7 +43,6 @@ const AppRouter = () => {
         <Stack.Screen name={ROUTE.LOGIN} component={LoginPage} />
         <Stack.Screen name={ROUTE.HOME} component={MainPage} />
         <Stack.Screen name={ROUTE.MAIN} component={HomePage} />
-        <Stack.Screen name={"PageA"} component={PageA} />
       </Stack.Group>
 
       <Stack.Screen
