@@ -103,11 +103,26 @@ const PinPage = () => {
 
       <View style={{ flex: 1, justifyContent: "center" }}>{pinButtons}</View>
 
-      <FormButton
+      {/* <FormButton
         onClick={() => {
           console.log(pin);
           navigation.navigate(pinParam.prevPage, {
             message: "ok",
+          });
+        }}
+        label={"Submit"}
+      ></FormButton> */}
+
+      <FormButton
+        onClick={() => {
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: pinParam.prevPage,
+                params: { message: "OK" },
+              },
+            ],
           });
         }}
         label={"Submit"}

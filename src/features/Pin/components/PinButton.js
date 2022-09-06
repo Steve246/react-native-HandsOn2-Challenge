@@ -11,7 +11,9 @@ const PinButton = ({ text, onPress }) => {
       onPress((prevState) => {
         if (prevState.length < 6) {
           return prevState + text;
-        } else return prevState;
+        } else {
+          return prevState;
+        }
       });
     } else {
       onPress((prevState) => prevState.slice(0, -1));
@@ -46,19 +48,6 @@ const styling = (theme) =>
       alignItems: "center",
       justifyContent: "center",
       margin: theme.spacing.m,
-    },
-
-    circleAltenative: {
-      borderColor: theme.colors.foreground,
-      borderWidth: 1,
-      margin: theme.spacing.s,
-      width: 180,
-      height: 60,
-      borderRadius: theme.radius.m,
-      padding: theme.spacing.s,
-      justifyContent: "space-between",
-      flexDirection: "row",
-      alignItems: "center",
     },
   });
 
