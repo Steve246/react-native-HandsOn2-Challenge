@@ -1,185 +1,119 @@
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, Text, TextInput, View, StyleSheet } from "react-native";
 import MainContainer from "../../shared/components/MainContainer";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import FormButton from "../../shared/components/FormButton";
 import { useEffect, useState } from "react";
 import { useTheme } from "../../shared/context/ThemeContext";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import arrayShuffle from "array-shuffle";
+import PinButton from "./components/PinButton";
+import SwitchWithForwardedRef from "react-native/Libraries/Components/Switch/Switch";
+import PinInputIndicator from "./components/PinInputIndicator";
 
 const PinPage = () => {
   const theme = useTheme();
-  const styles = styling(theme);
-  const [pin, setPin] = useState("");
   const navigation = useNavigation();
   const route = useRoute();
   const [pinParam, setPinParam] = useState({});
-
-  const buttonList = [
-    { id: 1, number: 1 },
-    { id: 2, number: 2 },
-    { id: 3, number: 3 },
-    { id: 4, number: 4 },
-    { id: 5, number: 5 },
-    { id: 6, number: 6 },
-    { id: 7, number: 7 },
-    { id: 8, number: 8 },
-    { id: 9, number: 9 },
-    { id: 0, number: 0 },
-  ];
-
+  const [pin, setPin] = useState("");
+  const [pinButtons, setPinButtons] = useState([]);
   useEffect(() => {
-    console.log(pin);
-  }, [pin]);
-
-  useEffect(() => {
-    if (route.params.prevPage) {
+    if (route.params?.userId && route.params?.prevPage) {
       setPinParam({
+        userId: route.params.userId,
         prevPage: route.params.prevPage,
       });
     }
   }, [route.params]);
 
-  const KeyboardList = ({ button }) => {
-    const theme = useTheme();
-    const styles = styling(theme);
+  useEffect(() => {
+    setPinButtons(renderPinButton());
+  }, []);
 
-    return (
-      <TouchableOpacity
-        style={{ alignItems: "center" }}
-        onPress={() => {
-          buttonPressChange(button.number);
-        }}
-      >
-        <View style={styles.circularMenu}>
-          <Text style={styles.textMenu}>{button.number}</Text>
-        </View>
-      </TouchableOpacity>
-    );
+  const renderPins = ({ item }) => {
+    return <PinButton text={item} onPress={setPin} />;
   };
 
-  const KeyboardView = () => {
-    const renderItem = ({ item }) => {
-      return <KeyboardList button={item} />;
-    };
-    const renderKeyboardViews = () => {
-      const keyboardViews = [];
-      for (let i = 0; i < buttonList.length / 3; i++) {
-        const startIndex = i * 3;
-        const endIndex = i * 3 + 3;
-        const dataButtons = arrayShuffle(buttonList).slice(
-          startIndex,
-          endIndex
-        );
-        let contentStyle = { flex: 1, justifyContent: "space-between" };
-        if (dataButtons.length % 3 !== 0) {
-          contentStyle = { flex: 1 };
-        }
-        const m = (
-          <FlatList
-            key={i}
-            horizontal
-            data={dataButtons}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={contentStyle}
-          />
-        );
-        keyboardViews.push(m);
-      }
-      return keyboardViews;
-    };
-    return <>{renderKeyboardViews()}</>;
-  };
+  const renderPinButton = () => {
+    const pinLabels = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
-  const buttonPressDelete = () => {
-    let newPin = pin;
-    newPin = newPin.slice(0, -1);
-    setPin(newPin);
-  };
+    const shuffledPinlabels = pinLabels
+      .map((value) => ({
+        value,
+        sort: Math.random(),
+      }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value);
 
-  const buttonPressChange = (input) => {
-    if (pin.length < 6) {
-      setPin(pin + input);
-    } else {
-      console.log("Full");
+    shuffledPinlabels.splice(9, 0, "-1");
+    shuffledPinlabels.push("<");
+
+    const pins = [];
+
+    for (let i = 0; i < shuffledPinlabels.length; i++) {
+      const startIndex = i * 3;
+      const endIndex = i * 3 + 3;
+      const buttons = shuffledPinlabels.slice(startIndex, endIndex);
+
+      const b = (
+        <FlatList
+          key={i}
+          data={buttons}
+          horizontal
+          renderItem={renderPins}
+          keyExtractor={(item) => item}
+          contentContainerStyle={{ flex: 1, justifyContent: "space-evenly" }}
+        />
+      );
+      pins.push(b);
     }
+    return pins;
   };
 
   return (
     <MainContainer>
-      <View style={styles.pinView}>
+      <View style={{ alignItems: "center" }}>
         <View style={{ width: "50%" }}>
-          <Text style={styles.pinLabel}>Please input PIN {"\n"}</Text>
-          <TextInput
+          <Text
+            style={[
+              theme.text.subtitle,
+              {
+                textAlign: "center",
+              },
+            ]}
+          >
+            Please input PIN {"\n"} (User id : {pinParam.userId})
+          </Text>
+          {/* <TextInput
             secureTextEntry
-            keyboardType="numeric"
-            maxLength={6}
-            style={styles.pinInput}
+            style={{
+              borderBottomColor: theme.colors.primary,
+              borderBottomWidth: 1,
+              marginVertical: theme.spacing.l,
+              fontSize: 32,
+              textAlign: "center",
+            }}
             value={pin}
             onChangeText={setPin}
-          />
+          ></TextInput> */}
+
+          <View style={{ margin: theme.spacing.l }}>
+            <PinInputIndicator pinVal={pin} />
+          </View>
         </View>
       </View>
-      <View>
-        <KeyboardView />
-        <TouchableOpacity
-          onPress={buttonPressDelete}
-          style={styles.circularMenu}
-        >
-          <Text>D</Text>
-        </TouchableOpacity>
-      </View>
+
+      <View style={{ flex: 1, justifyContent: "center" }}>{pinButtons}</View>
+
       <FormButton
-        label={"Submit"}
-        onclick={() => {
+        onClick={() => {
+          console.log(pin);
           navigation.navigate(pinParam.prevPage, {
-            message: "OK",
+            message: "ok",
           });
         }}
-      />
+        label={"Submit"}
+      ></FormButton>
     </MainContainer>
   );
 };
-
-const styling = (theme) =>
-  StyleSheet.create({
-    pinInput: {
-      borderBottomColor: "rgb(252,80,40)",
-      borderBottomWidth: 1,
-      marginVertical: theme.spacing.l,
-      fontSize: 32,
-      textAlign: "center",
-    },
-    pinLabel: {
-      textAlign: "center",
-      fontFamily: "Poppins-Regular",
-    },
-    pinView: {
-      alignItems: "center",
-    },
-    circularMenu: {
-      width: 64,
-      height: 64,
-      borderColor: "grey",
-      borderWidth: 2,
-      borderRadius: 32,
-      overflow: "hidden",
-      justifyContent: "center",
-      alignItems: "center",
-      margin: theme.spacing.s,
-    },
-    textMenu: {
-      textAlign: "center",
-      fontSize: 25,
-      color: "black",
-    },
-  });
 
 export default PinPage;

@@ -1,20 +1,35 @@
 import { useTheme } from "../../../shared/context/ThemeContext";
 import React from "react";
-import { Text, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 
 const PinButton = ({ text, onPress }) => {
   const theme = useTheme();
   const styles = styling(theme);
 
+  const handleButtonPress = () => {
+    if (text !== "<") {
+      onPress((prevState) => {
+        if (prevState.length < 6) {
+          return prevState + text;
+        } else return prevState;
+      });
+    } else {
+      onPress((prevState) => prevState.slice(0, -1));
+    }
+  };
+
   const renderButton = () => {
-    return (
-      <TouchableOpacity>
-        <View styles={styles.circleButton}>
-          <Text styles={[theme.text.subtitle2]}> {text} </Text>
-        </View>
-      </TouchableOpacity>
-    );
+    if (text !== "-1") {
+      return (
+        <TouchableOpacity onPress={handleButtonPress}>
+          <View styles={styles.circleButton}>
+            <Text styles={[theme.text.subtitle2]}> {text} </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    } else {
+      return <View style={{ width: 96 }}></View>;
+    }
   };
 
   return <>{renderButton()}</>;
@@ -26,11 +41,24 @@ const styling = (theme) =>
       width: 64,
       height: 64,
       borderRadius: 32,
-      borderColor: theme.color.foreground,
+      borderColor: theme.colors.foreground,
       borderWidth: 2,
       alignItems: "center",
-      justifyCOntent: "center",
+      justifyContent: "center",
+      margin: theme.spacing.m,
+    },
+
+    circleAltenative: {
+      borderColor: theme.colors.foreground,
+      borderWidth: 1,
       margin: theme.spacing.s,
+      width: 180,
+      height: 60,
+      borderRadius: theme.radius.m,
+      padding: theme.spacing.s,
+      justifyContent: "space-between",
+      flexDirection: "row",
+      alignItems: "center",
     },
   });
 
