@@ -107,6 +107,7 @@ const MainPage = () => {
               }}
             >
               <Text>Logout</Text>
+              {/* taro text disini */}
             </TouchableOpacity>
           </View>
         </ScrollView>

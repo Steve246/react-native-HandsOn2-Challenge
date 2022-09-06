@@ -7,9 +7,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { FontAwesome } from "@expo/vector-icons";
 import { useTheme } from "../shared/context/ThemeContext";
 import { useAuth } from "../shared/hook/UseAuth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-import Home from "../features/Home/Home/Home.js"
+import Home from "../features/Home/Home/Home.js";
+import PageA from "../features/Home/Home/PageA/PageA";
+import MainPage from "../features/Home/Home/Home.js";
+import { View } from "react-native";
 
 const Stack = createStackNavigator();
 const AppRouter = () => {
@@ -17,14 +20,12 @@ const AppRouter = () => {
   const [initialRoute, setInitialRoute] = useState(null);
   const theme = useTheme();
 
-  
-
   useEffect(() => {
     const onValidToken = async () => {
       try {
         const resp = await isTokenExist();
         if (resp) {
-          setInitialRoute(ROUTE.MAIN);
+          setInitialRoute(ROUTE.HOME);
         } else {
           setInitialRoute(ROUTE.WELCOME);
         }
@@ -44,30 +45,21 @@ const AppRouter = () => {
         <Stack.Screen name={ROUTE.MAIN} component={HomePage} />
         <Stack.Screen name={"PageA"} component={PageA} />
       </Stack.Group>
-      {/* <Stack.Group
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: "white",
-          },
-          headerShadowVisible: false,
-          presentation: "modal",
+
+      <Stack.Screen
+        name={ROUTE.PIN}
+        component={PinPage}
+        options={{
+          headerTitle: "",
+          headerBackImage: () => (
+            <FontAwesome
+              size={24}
+              name={"chevron-left"}
+              color={theme.colors.foreground}
+            />
+          ),
         }}
-      > */}
-        <Stack.Screen
-          name={ROUTE.PIN}
-          component={PinPage}
-          options={{
-            headerTitle: "",
-            headerBackImage: () => (
-              <FontAwesome
-                size={24}
-                name={"chevron-left"}
-                color={theme.colors.foreground}
-              />
-            ),
-          }}
-        />
-      </Stack.Group>
+      />
     </Stack.Navigator>
   ) : (
     <View> </View>
